@@ -159,7 +159,8 @@ def apply_workbuddy(entry, apply):
         log(f"  已备份: {bak}")
     write_json(path, data)
     log("  已写入。")
-    log("  提醒：在连接器管理页右上角的自定义连接器入口，点「信任」才会启用。")
+    log("  提醒：完全退出并重启 WorkBuddy（Cmd+Q，不是关窗口），")
+    log("        再到「连接器」→「+ 添加 MCP」→「MCP 服务管理」里给 rea 点「信任」。")
     return True
 
 
