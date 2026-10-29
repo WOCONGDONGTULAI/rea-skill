@@ -42,9 +42,10 @@ if command -v node >/dev/null 2>&1; then
   if [ "$MAJOR" = "26" ] && [ "$MINOR" -gt 12 ] 2>/dev/null; then OK=1; fi
   if [ "$MAJOR" = "26" ] && [ "$MINOR" = "12" ] && [ "$PATCH" -ge 1 ] 2>/dev/null; then OK=1; fi
   if [ "$OK" = "1" ]; then
-    pass "Node 版本满足 REA 要求"
+    pass "Node 版本满足 REA 声明的要求"
   else
-    fail "Node 版本不满足要求（需要 22.23.4+ / 24.22.1+ / 26.12.1+），npx rea-agents 会失败"
+    warn "Node 版本低于 REA 声明的要求（需 22.23.4+ / 24.22.1+ / 26.12.1+）"
+    info "实测 npm 只打印 EBADENGINE 警告，REA 仍可正常启动；如遇异常再升级 Node"
   fi
 else
   fail "未找到 node —— REA 无法启动"
