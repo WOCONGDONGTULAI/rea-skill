@@ -78,14 +78,17 @@ npx rea-agents setup
 }
 ```
 
-已全局安装 REA 时，用绝对路径更稳定（避免 `npx` 每次解析版本）：
+> **`-y` 是 npx 的参数，不能配到 `node` 命令上**（`node -y` 不是有效用法）。
+> `command` 必须是 `npx`，`-y` 放在 `args` 里。
+
+已全局安装 REA 时，用 `rea` 命令更稳定（避免 `npx` 每次解析版本）：
 
 ```json
 {
   "mcpServers": {
     "rea": {
-      "command": "/usr/local/bin/node",
-      "args": ["/usr/local/lib/node_modules/rea-agents/scripts/rea.mjs", "mcp"],
+      "command": "/usr/local/bin/rea",
+      "args": ["mcp"],
       "env": {}
     }
   }
