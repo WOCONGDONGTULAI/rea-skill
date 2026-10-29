@@ -27,7 +27,8 @@ rea --help
 
 或者不装，用 npx 兜底：`npx -y rea-agents@latest --help`
 
-> **Node 版本要求**：`^22.23.4 || ^24.22.1 || >=26.12.1`。版本太低 `npx rea-agents` 会直接失败。
+> **Node 版本要求**：`^22.23.4 || ^24.22.1 || >=26.12.1`。
+> 低于此版本时 npm 只打印 `EBADENGINE` 警告 —— 实测 22.22.2 下 REA 6.8.0 能正常启动并完成 MCP 握手，不是硬性阻断。
 > 用 `bash scripts/rea_doctor.sh` 检查。
 
 ### 2. 注册 MCP
