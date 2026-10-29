@@ -22,7 +22,7 @@ REA 是一个 MCP 服务器兼 CLI，把「已发布的产物」变成可检索�
 按这个顺序判断，避免把时间浪费在重复 setup 上：
 
 1. **当前会话里有 REA 工具吗？** 有就直接开工，不要先跑 doctor。
-2. **没有工具** → 读 [references/setup-and-connect.md](references/setup-and-connect.md)，按其中的注册流程处理。
+2. **没有工具** → 先跑 `bash scripts/bootstrap.sh`（装技能 + 注册 MCP，可重复执行）；细节读 [references/setup-and-connect.md](references/setup-and-connect.md)。
 3. **注册存在但连不上** → 读 [references/connection-and-recovery.md](references/connection-and-recovery.md)，按阶梯排查。
 
 关键事实（省得重复踩）：
@@ -31,6 +31,7 @@ REA 是一个 MCP 服务器兼 CLI，把「已发布的产物」变成可检索�
 - REA setup **从不**安装或升级 Node.js、npm、Homebrew、Java、Ghidra、IDA、JADX、Kuna、Binwalk、Unblob。用已有环境，不要为了修 MCP 注册去装无关软件。
 - REA 声明要求 Node `^22.23.4 || ^24.22.1 || >=26.12.1`。低于此版本时 npm 只打印 `EBADENGINE` 警告，**实测仍可正常启动**（22.22.2 下 REA 6.8.0 完成了完整 MCP 握手）；遇到异常时再考虑升级。
 - 静态 JS 分析和普通 ZIP 清单**不需要**任何原生引擎，这是最稳的入口。
+- 技能内容在 GitHub，本机只存两样易失状态：安装副本和 `mcp.json` 里的注册。**换电脑后重跑 `scripts/bootstrap.sh`** 即可恢复；装完必须重启客户端给 `rea` 点「信任」，并**新开会话**，否则等于没装。
 
 ### 没有 MCP 时的 CLI 兜底
 
