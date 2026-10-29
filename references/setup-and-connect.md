@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | Node.js | 声明要求 `^22.23.4 \|\| ^24.22.1 \|\| >=26.12.1` | 低于此版本时 npm 只打印 `EBADENGINE` 警告。**实测 22.22.2 下 REA 6.8.0 能正常启动并完成 MCP 握手**，不是硬性阻断；但建议升级以消除不确定性。 |
 | npm | 随 Node 附带 | 用 `npx` 免全局安装 |
-| 平台 | macOS / Linux / Windows | 部分能力仅限 Linux（见第 5 节） |
+| 平台 | macOS / Linux / Windows | 部分能力仅限 Linux（见第 6 节） |
 
 检查：
 
@@ -19,7 +19,25 @@ npm --version
 
 **Linux 额外前置**：Ghidra、JADX、固件工具启动和静态 JS/Electron 分析需要 REA 的 `PATH` 上有兼容 procps 的 `ps`（用于进程归属检查）。
 
-## 2. 三种安装形态
+## 2. 最快路径：一条命令
+
+本仓库自带 `scripts/bootstrap.sh`，把「装技能本体 + 注册 MCP」合成一步，可重复执行：
+
+```bash
+git clone https://github.com/WOCONGDONGTULAI/rea-skill.git /tmp/rea-skill
+bash /tmp/rea-skill/scripts/bootstrap.sh
+```
+
+- 已安装时走 `git pull` 更新，不重复克隆
+- MCP 注册一致时不改配置；要改会先备份
+- 检测到 `~/.openclaw` 才装 OpenClaw 版本，否则只装 WorkBuddy（`--target both` 可强制）
+
+**换电脑同理** —— 技能内容在 GitHub，本机只存安装副本和 MCP 配置，重跑这条命令即可恢复。
+之后必须重启客户端并给 `rea` 点「信任」，再**新开会话**，否则不生效。
+
+`--dry-run` 预览、`--no-mcp` 只装技能。想手工控制每一步就往下看。
+
+## 3. 三种安装形态
 
 ### A. npx 免安装（推荐先用这个试）
 
@@ -58,9 +76,9 @@ npx rea-agents setup
 
 **`setup` 支持的客户端**：`claude_code`、`claude_desktop`、`codex`、`cursor`、`gemini_cli`、`windsurf`、`devin`、`opencode`、`antigravity`、`copilot_cli`、`commandcode`、`qwen_code`、`vscode`、`trae`、`grok_build`、`omp`、`pi`、`hermes`、`qoder`、`droid`、`zcode`、`dsh`、`freebuff`、`grok_bot`。
 
-> **WorkBuddy 和 OpenClaw 不在上表中。** 对这两个平台必须手写注册，见第 3 节。
+> **WorkBuddy 和 OpenClaw 不在上表中。** 对这两个平台必须手写注册，见第 4 节。
 
-## 3. 手动注册 MCP
+## 4. 手动注册 MCP
 
 ### WorkBuddy
 
@@ -138,7 +156,7 @@ python3 scripts/install_mcp.py --apply      # 实际写入（自动备份原文�
 - **stdio（默认）**：MCP 客户端拉起子进程，通过 stdin/stdout 通信。WorkBuddy 与 OpenClaw 的注册都走这个。
 - **streamable HTTP**：`rea mcp --http --port 8765`。绑定 loopback 之外需要 `MCP_ALLOWED_HOSTS` 或 `--allowed-hosts`（逗号分隔的主机名/IP，不带 URL 和端口）。不同 `Host` 或浏览器 `Origin` 返回 403，缺失 `Origin` 接受。只服务一个客户端，同时连接会互相顶替。
 
-## 4. 环境变量
+## 5. 环境变量
 
 按需设置，不要一次全上。
 
@@ -159,7 +177,7 @@ python3 scripts/install_mcp.py --apply      # 实际写入（自动备份原文�
 注意：修改**服务器启动环境**里的变量需要重启 REA 进程才生效；
 改**运行环境变量**则可以用 `update_analysis_settings` 热改（见 evidence-workflows.md）。
 
-## 5. provider 配置
+## 6. provider 配置
 
 原生反编译需要一个 provider。REA **不安装**任何 provider。
 
@@ -191,7 +209,7 @@ rea doctor --json
 - **仅 Linux**：TShark 抓包分析（需 util-linux `prlimit`）、sigrok 波形解码、固件解包（Binwalk/Unblob）。
 - **macOS/Linux**：进程捕获（macOS 还需 `xcrun`/Swift 做归属检查）。
 
-## 6. 连通性自检
+## 7. 连通性自检
 
 ```bash
 rea mcp doctor --json      # 用当前 shell 的运行时测试生产 MCP 适配器
@@ -204,7 +222,7 @@ rea doctor --json          # 全量体检
 `/abs/path/to/rea-agents` **不能**自己找到解释器 —— npm 启动器的 `#!/usr/bin/env node` 仍会搜 `PATH` 找 Node。
 终端里跑得通，不代表客户端能拉起来。
 
-## 7. 卸载
+## 8. 卸载
 
 ```bash
 rea uninstall
