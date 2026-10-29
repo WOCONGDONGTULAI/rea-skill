@@ -78,15 +78,32 @@ def find_global_rea():
     return None
 
 
+def find_npx():
+    """找 npx 可执行文件的绝对路径。"""
+    exe = shutil.which("npx")
+    if exe and os.path.isabs(exe):
+        return exe
+    return None
+
+
 def build_server_entry(node_exe, use_global):
-    """构造 MCP server 定义。"""
+    """构造 MCP server 定义。
+
+    注意：`-y` 是 npx 的参数，不是 node 的参数。
+    用 node 直接启动时必须指向 REA 的入口脚本，不能带 `-y`。
+
+    优先用 npx 的绝对路径 —— MCP 客户端从桌面 App 启动时可能继承到与终端
+    不同的 PATH，终端里跑得通不代表客户端能拉起 npx。
+    """
     if use_global:
         rea = find_global_rea()
         if rea:
             # rea 是 npm shim，会自己找 node。直接用它最省事。
             return {"command": rea, "args": ["mcp"]}
-    if node_exe:
-        return {"command": node_exe, "args": ["-y", "rea-agents@latest", "mcp"]}
+    npx = find_npx()
+    if npx:
+        return {"command": npx, "args": ["-y", "rea-agents@latest", "mcp"]}
+    # 找不到 npx 绝对路径时退回相对命令
     return {"command": "npx", "args": ["-y", "rea-agents@latest", "mcp"]}
 
 
