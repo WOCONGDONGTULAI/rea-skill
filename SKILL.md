@@ -29,7 +29,7 @@ REA 是一个 MCP 服务器兼 CLI，把「已发布的产物」变成可检索�
 
 - `rea setup` **不支持 WorkBuddy / OpenClaw**，只支持 Claude Code、Codex、Cursor 等 20+ 个客户端。对这两个平台必须**手写 MCP 注册**，本仓库的 `scripts/install_mcp.py` 就是干这个的。
 - REA setup **从不**安装或升级 Node.js、npm、Homebrew、Java、Ghidra、IDA、JADX、Kuna、Binwalk、Unblob。用已有环境，不要为了修 MCP 注册去装无关软件。
-- REA 要求 Node `^22.23.4 || ^24.22.1 || >=26.12.1`。版本太低时 `npx rea-agents` 会直接失败。
+- REA 声明要求 Node `^22.23.4 || ^24.22.1 || >=26.12.1`。低于此版本时 npm 只打印 `EBADENGINE` 警告，**实测仍可正常启动**（22.22.2 下 REA 6.8.0 完成了完整 MCP 握手）；遇到异常时再考虑升级。
 - 静态 JS 分析和普通 ZIP 清单**不需要**任何原生引擎，这是最稳的入口。
 
 ### 没有 MCP 时的 CLI 兜底
