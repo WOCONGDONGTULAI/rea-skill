@@ -204,8 +204,9 @@ def main():
         log(f"Node: {node_exe} (v{raw})")
         ok, why = node_ok(parts)
         if not ok:
-            log(f"  ! 版本不满足 REA 要求：{why}")
-            log("  ! npx rea-agents 会失败。请先升级 Node 再继续。")
+            log(f"  ! 版本低于 REA 声明的要求：{why}")
+            log("  ! npm 会打印 EBADENGINE 警告，但实测仍可运行（REA 6.8.0 在 22.22.2 下正常启动）。")
+            log("  ! 若后续出现异常，升级 Node 到 22.23.4+ 可消除这个不确定性。")
             log()
     else:
         log("! 没找到 node。请先安装 Node.js。")
