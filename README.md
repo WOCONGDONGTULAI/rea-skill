@@ -18,7 +18,25 @@ REA 官方自带一个技能包，但它面向 Claude Code / Codex：
 
 ## 安装
 
-### 1. 装 REA 本体
+### 一键装（推荐）
+
+```bash
+git clone https://github.com/WOCONGDONGTULAI/rea-skill.git /tmp/rea-skill
+bash /tmp/rea-skill/scripts/bootstrap.sh
+```
+
+脚本按顺序做完：检查依赖 → 装技能到 `~/.workbuddy/skills/`（检测到 `~/.openclaw` 就一并装）→ 注册 MCP → 打印后续动作。
+**可重复执行**，已装的会原地 `git pull` 更新，不会重复克隆、不会重复写配置。
+
+```bash
+bash scripts/bootstrap.sh --dry-run        # 只看会做什么
+bash scripts/bootstrap.sh --target both    # 强制两个平台都装
+bash scripts/bootstrap.sh --no-mcp         # 只装技能，不碰 MCP 配置
+```
+
+### 手动装
+
+#### 1. 装 REA 本体
 
 ```bash
 npm install --global rea-agents
@@ -33,7 +51,7 @@ rea --help
 >
 > **注册格式注意**：`command` 必须是 `npx`，`-y` 是 npx 的参数 —— 不能写成 `command: "node", args: ["-y", ...]`，`node -y` 不是有效用法。
 
-### 2. 注册 MCP
+#### 2. 注册 MCP
 
 ```bash
 python3 scripts/install_mcp.py           # 预览
@@ -52,7 +70,7 @@ python3 scripts/install_mcp.py --apply   # 写入（自动备份原配置）
 - WorkBuddy：连接器管理页右上角的自定义连接器入口 → 对 `rea` 点「信任」。新 MCP 不会自动激活。
 - OpenClaw：重启或重连 Gateway。注意键是 `mcp.servers`，**不是** `mcpServers`。
 
-### 3. 装技能
+#### 3. 装技能
 
 **WorkBuddy**（用户级，所有项目可用）：
 
@@ -75,12 +93,47 @@ openclaw skills install git:WOCONGDONGTULAI/rea-skill
 > 两个平台用的是同一套 SKILL.md 标准，**同一份文件两边都能用**，不用改。
 > 技能在会话启动时加载，中途安装的要**新开一个会话**才生效。
 
-### 4. 验证
+#### 4. 验证
 
 ```bash
 bash scripts/rea_doctor.sh
 bash scripts/rea_doctor.sh --provider ghidra   # 附带 provider 检查
 ```
+
+## 换电脑了怎么办
+
+**知识在云端，安装在本机。** 分清楚这两类东西，换机就不会踩坑：
+
+| 东西 | 在哪 | 换机后 |
+| --- | --- | --- |
+| Skill 内容（SKILL.md + references + scripts） | GitHub 公开仓库 | **在** —— 一条命令拉回来 |
+| 版本历史 | GitHub Releases（`1`/`2`/`3`…） | **在** |
+| `~/.workbuddy/skills/` 下的安装副本 | 本机磁盘 | **不在** —— 重装 |
+| `~/.workbuddy/mcp.json` 里的 MCP 注册 | 本机磁盘 | **不在** —— 重注册 |
+| Node.js / npm | 本机 | **不在** —— 自己装 |
+| Hopper / Ghidra / IDA / Kuna | 本机 | **不在** —— 原生反编译需要，静态 JS 分析不需要 |
+
+换到新机器后跑这一条就够：
+
+```bash
+git clone https://github.com/WOCONGDONGTULAI/rea-skill.git /tmp/rea-skill
+bash /tmp/rea-skill/scripts/bootstrap.sh
+```
+
+然后**必须手动做两件事**，不做就等于没装：
+
+1. 重启客户端，在连接器管理页右上角的自定义连接器入口给 `rea` 点「信任」——新 MCP 不会自动激活。
+2. **新开一个会话**——技能在会话启动时加载，当前会话里装的不生效。
+
+> 换机后如果发现「技能好像没生效」，先确认这两步，而不是怀疑仓库坏了。
+
+老机器想同步最新版本，不用重新 clone，直接：
+
+```bash
+bash ~/.workbuddy/skills/rea-reverse-engineering/scripts/bootstrap.sh
+```
+
+它会 `git pull` 更新技能、重新校验 MCP 注册（一致时不动配置）。
 
 ## 用起来
 
@@ -107,6 +160,7 @@ rea-skill/
 │   ├── evidence-workflows.md             # Evidence 分页、对比、验证
 │   └── environments.md                   # AgentEnv 智能体环境
 └── scripts/
+    ├── bootstrap.sh                      # 新机 / 换机一键安装（装技能 + 注册 MCP）
     ├── install_mcp.py                    # 一键注册 MCP 到 WorkBuddy / OpenClaw
     └── rea_doctor.sh                     # 环境体检
 ```
