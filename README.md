@@ -30,6 +30,8 @@ rea --help
 > **Node 版本要求**：`^22.23.4 || ^24.22.1 || >=26.12.1`。
 > 低于此版本时 npm 只打印 `EBADENGINE` 警告 —— 实测 22.22.2 下 REA 6.8.0 能正常启动并完成 MCP 握手，不是硬性阻断。
 > 用 `bash scripts/rea_doctor.sh` 检查。
+>
+> **注册格式注意**：`command` 必须是 `npx`，`-y` 是 npx 的参数 —— 不能写成 `command: "node", args: ["-y", ...]`，`node -y` 不是有效用法。
 
 ### 2. 注册 MCP
 
